@@ -1,0 +1,7 @@
+# Minimal requirements for running train_eval_meds.py
+# Note: install torch/torchvision separately following https://pytorch.org/get-started/locally/
+
+timm
+seaborn
+matplotlib
+scikit-learn

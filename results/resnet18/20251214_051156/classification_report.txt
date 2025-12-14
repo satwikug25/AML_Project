@@ -1,0 +1,26 @@
+               precision    recall  f1-score   support
+
+acetaminophen       0.79      0.72      0.76        58
+    albuterol       0.71      0.45      0.56        11
+   amlodipine       0.72      0.87      0.79        30
+  amoxicillin       0.88      0.86      0.87        35
+      aspirin       0.74      0.59      0.66        59
+ atorvastatin       0.86      0.69      0.77        26
+ azithromycin       0.77      0.77      0.77        43
+   cetirizine       0.78      0.81      0.79        62
+  clopidogrel       0.83      0.94      0.88        16
+   furosemide       0.82      0.82      0.82        39
+    ibuprofen       0.58      0.83      0.68        58
+levothyroxine       0.95      0.86      0.90        44
+   lisinopril       0.80      0.94      0.87        35
+   loratadine       0.90      0.70      0.79        61
+     losartan       0.92      0.81      0.86        27
+    metformin       0.62      0.68      0.65        38
+     naproxen       0.78      0.60      0.67        52
+   omeprazole       0.64      0.77      0.70        44
+ pantoprazole       0.60      0.72      0.66        36
+  simvastatin       0.83      0.76      0.79        25
+
+     accuracy                           0.76       799
+    macro avg       0.78      0.76      0.76       799
+ weighted avg       0.77      0.76      0.76       799
