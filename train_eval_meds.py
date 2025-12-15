@@ -17,9 +17,6 @@ import json
 from datetime import datetime
 
 
-# -----------------------------
-# Data loaders
-# -----------------------------
 
 def get_dataloaders(
     data_root: str,
@@ -27,13 +24,6 @@ def get_dataloaders(
     batch_size: int = 32,
     num_workers: int = 4,
 ) -> Tuple[DataLoader, DataLoader, DataLoader, int, Dict[int, str]]:
-    """
-    Returns train/val/test dataloaders, number of classes, and idx->class mapping.
-    Expects:
-      data_root/train
-      data_root/val
-      data_root/test
-    """
 
     train_dir = os.path.join(data_root, "train")
     val_dir = os.path.join(data_root, "val")
@@ -44,7 +34,6 @@ def get_dataloaders(
     print(f"[DATA] Val   dir: {val_dir}")
     print(f"[DATA] Test  dir: {test_dir}")
 
-    # Common mean/std for ImageNet pretrained networks
     mean = [0.485, 0.456, 0.406]
     std = [0.229, 0.224, 0.225]
 
@@ -76,7 +65,6 @@ def get_dataloaders(
     print(f"[DATA] #val   images: {len(val_dataset)}")
     print(f"[DATA] #test  images: {len(test_dataset)}")
 
-    # pin_memory is really only useful for CUDA; MPS/CPU can ignore
     pin_memory = torch.cuda.is_available()
 
     train_loader = DataLoader(
@@ -98,15 +86,7 @@ def get_dataloaders(
 
     return train_loader, val_loader, test_loader, num_classes, idx_to_class
 
-
-# -----------------------------
-# Model builders
-# -----------------------------
-
 def build_resnet(num_classes: int, variant: str = "resnet18", pretrained: bool = True) -> nn.Module:
-    """
-    Build a ResNet model (18 or 50) and adjust final layer.
-    """
     print(f"[MODEL] Building ResNet variant={variant}, pretrained={pretrained}")
     if variant == "resnet18":
         model = models.resnet18(weights=models.ResNet18_Weights.IMAGENET1K_V1 if pretrained else None)
@@ -122,12 +102,6 @@ def build_resnet(num_classes: int, variant: str = "resnet18", pretrained: bool =
 
 
 def build_vit(num_classes: int, variant: str = "vit_b16", pretrained: bool = True) -> nn.Module:
-    """
-    Build a ViT model using timm.
-    Common variants:
-      vit_b16 -> 'vit_base_patch16_224'
-      vit_s16 -> 'vit_small_patch16_224'
-    """
     if variant == "vit_b16":
         name = "vit_base_patch16_224"
     elif variant == "vit_s16":
@@ -140,9 +114,7 @@ def build_vit(num_classes: int, variant: str = "vit_b16", pretrained: bool = Tru
     return model
 
 
-# -----------------------------
-# Training & evaluation loops
-# -----------------------------
+
 
 def train_one_epoch(
     model: nn.Module,
@@ -234,9 +206,7 @@ def test_model(
     loader: DataLoader,
     device: torch.device,
 ) -> Tuple[float, np.ndarray, np.ndarray]:
-    """
-    Returns accuracy, y_true, y_pred.
-    """
+   
     model.eval()
     correct = 0
     total = 0
@@ -270,7 +240,6 @@ def _ensure_dir(path: str):
 
 
 def save_training_plots(result_dir: str, train_losses, val_losses, train_accs, val_accs):
-    """Save loss and accuracy curves to result_dir."""
     _ensure_dir(result_dir)
     epochs = list(range(1, len(train_losses) + 1))
 
@@ -298,7 +267,6 @@ def save_training_plots(result_dir: str, train_losses, val_losses, train_accs, v
 
 
 def save_confusion_matrix(result_dir: str, y_true: np.ndarray, y_pred: np.ndarray, idx_to_class: Dict[int, str]):
-    """Save confusion matrix heatmap to result_dir."""
     _ensure_dir(result_dir)
     cm = confusion_matrix(y_true, y_pred)
     labels = [idx_to_class[i] for i in sorted(idx_to_class.keys())]
@@ -330,10 +298,6 @@ def save_metadata(result_dir: str, meta: dict):
         json.dump(meta, f, indent=2)
 
 
-# -----------------------------
-# Main
-# -----------------------------
-
 def main():
     parser = argparse.ArgumentParser()
     parser.add_argument("--data_root", type=str, default="medicine_boxes_split",
@@ -351,7 +315,7 @@ def main():
                         help="If set, do not use ImageNet-pretrained weights")
     args = parser.parse_args()
 
-    # Device selection with MPS support
+    
     if torch.cuda.is_available():
         device = torch.device("cuda")
     elif torch.backends.mps.is_available():

@@ -3,23 +3,18 @@ import random
 import csv
 from shutil import copy2
 
-# =========================
-# CONFIG
-# =========================
 
 RAW_ROOT = "medicine_boxes_raw"
 SPLIT_ROOT = "medicine_boxes_split"
 
 TRAIN_RATIO = 0.70
-VAL_RATIO = 0.15  # test = remainder
+VAL_RATIO = 0.15  
 
 RANDOM_SEED = 42
 IMAGE_EXTS = (".jpg", ".jpeg", ".png", ".webp")
 
 
-# =========================
-# HELPERS
-# =========================
+
 
 def ensure_dir(path: str):
     os.makedirs(path, exist_ok=True)
@@ -29,9 +24,7 @@ def is_image(fname: str) -> bool:
     return fname.lower().endswith(IMAGE_EXTS)
 
 
-# =========================
-# SPLIT LOGIC
-# =========================
+
 
 def split_dataset():
     print("📂 Creating train/val/test split from RAW data...")
@@ -40,7 +33,6 @@ def split_dataset():
     if not os.path.isdir(RAW_ROOT):
         raise RuntimeError(f"RAW_ROOT not found: {RAW_ROOT}")
 
-    # Prepare split folders
     for split in ["train", "val", "test"]:
         ensure_dir(os.path.join(SPLIT_ROOT, split))
 
@@ -71,7 +63,6 @@ def split_dataset():
         n_val = int(n * VAL_RATIO)
         n_test = n - n_train - n_val
 
-        # Safety: ensure at least 1 train image
         if n_train == 0:
             n_train = 1
             if n_val > 0:
@@ -104,7 +95,7 @@ def split_dataset():
                 rel_path = os.path.join(split_name, cls, img)
                 index_rows.append((rel_path, cls, split_name))
 
-    # Write index CSV
+    
     csv_path = os.path.join(SPLIT_ROOT, "dataset_index.csv")
     with open(csv_path, "w", newline="") as f:
         writer = csv.writer(f)
@@ -115,9 +106,6 @@ def split_dataset():
     print(f"Index file: {csv_path}")
 
 
-# =========================
-# MAIN
-# =========================
 
 if __name__ == "__main__":
     split_dataset()

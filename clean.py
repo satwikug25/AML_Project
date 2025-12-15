@@ -17,7 +17,7 @@ def clean_folder(root: str, delete: bool = True):
             path = os.path.join(dirpath, fn)
             total += 1
             try:
-                # verify() checks file integrity without decoding full image
+               
                 with Image.open(path) as img:
                     img.verify()
             except (UnidentifiedImageError, OSError, ValueError) as e:
@@ -36,6 +36,5 @@ def clean_folder(root: str, delete: bool = True):
             print("  -", p, "|", e)
 
 if __name__ == "__main__":
-    # Clean both raw + split (raw is the important one)
     clean_folder("medicine_boxes_raw", delete=True)
     clean_folder("medicine_boxes_split", delete=True)

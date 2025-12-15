@@ -4,9 +4,7 @@ import csv
 import requests
 from shutil import copy2
 
-# =========================
-# CONFIG
-# =========================
+
 
 MEDICINES = [
     "ibuprofen",
@@ -31,25 +29,19 @@ MEDICINES = [
     "albuterol",
 ]
 
-# Where to store raw downloaded images (per class)
 RAW_ROOT = "medicine_boxes_raw"
 
-# Final split dataset: train/val/test subdirs
 SPLIT_ROOT = "medicine_boxes_split"
 
-# Train/val/test ratios
 TRAIN_RATIO = 0.70
-VAL_RATIO = 0.15  # test = 1 - train - val
+VAL_RATIO = 0.15  
 
-# Increase scraping to compensate for junk images
-PAGES_PER_DRUG = 8          # was ~2-3; now higher for more coverage
-PAGESIZE = 50               # was 25; can go up to 100
-MAX_IMAGES_PER_DRUG = 450   # was ~150; now higher to offset junk
+PAGES_PER_DRUG = 8          
+PAGESIZE = 50               
+MAX_IMAGES_PER_DRUG = 450   
 
-# Reproducible split
 RANDOM_SEED = 42
 
-# Junk filter keywords (pre-download)
 BAD_KEYWORDS = [
     "chemical", "structure", "diagram", "line", "logo", "formula",
     "molecular", "bond", "structural", "reaction", "schematic",
@@ -57,9 +49,6 @@ BAD_KEYWORDS = [
 ]
 
 
-# =========================
-# HTTP Session
-# =========================
 
 SESSION = requests.Session()
 SESSION.headers.update({
@@ -73,14 +62,9 @@ def get_json(url, params=None):
     return r.json()
 
 
-# =========================
-# Scraping
-# =========================
 
 def should_skip_media_item(m, url: str) -> bool:
-    """
-    Skip media items that are likely not packaging photos using metadata.
-    """
+   
     desc = (m.get("description") or "").lower()
     title = (m.get("title") or "").lower()
     url_l = (url or "").lower()
@@ -99,13 +83,6 @@ def scrape_medicine_images(drug_name: str,
                            pages: int = PAGES_PER_DRUG,
                            pagesize: int = PAGESIZE,
                            max_images_per_drug: int = MAX_IMAGES_PER_DRUG) -> int:
-    """
-    Scrape images from DailyMed for a given drug_name.
-    Uses:
-      - /services/v2/spls.json to get SPL entries (setid)
-      - /services/v2/spls/{setid}/media.json to get image URLs
-    Filters obvious junk via title/description/url keywords before download.
-    """
     print(f"\n🔍 Collecting images for: {drug_name}")
 
     class_folder = os.path.join(RAW_ROOT, drug_name.replace(" ", "_"))
@@ -168,11 +145,10 @@ def scrape_medicine_images(drug_name: str,
                 if not url or not mime.startswith("image/"):
                     continue
 
-                # metadata-based junk filter
                 if should_skip_media_item(m, url):
                     continue
 
-                # download
+                
                 try:
                     img_resp = SESSION.get(url, timeout=20)
                     img_resp.raise_for_status()
@@ -198,9 +174,7 @@ def scrape_medicine_images(drug_name: str,
     return downloaded
 
 
-# =========================
-# Split train/val/test
-# =========================
+
 
 def ensure_dir(path: str):
     os.makedirs(path, exist_ok=True)
@@ -236,7 +210,6 @@ def split_dataset():
         n_val = int(n * VAL_RATIO)
         n_test = n - n_train - n_val
 
-        # ensure each class has at least 1 train image if possible
         if n_train == 0 and n > 0:
             n_train = 1
             if n_val > 0:
@@ -271,9 +244,7 @@ def split_dataset():
     print(f"✅ Index CSV: {csv_path}")
 
 
-# =========================
-# Main
-# =========================
+
 
 if __name__ == "__main__":
     ensure_dir(RAW_ROOT)
