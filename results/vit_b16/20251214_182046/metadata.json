@@ -1,0 +1,17 @@
+{
+  "args": {
+    "data_root": "medicine_boxes_split",
+    "model": "vit_b16",
+    "epochs": 15,
+    "batch_size": 32,
+    "img_size": 224,
+    "lr": 0.0001,
+    "weight_decay": 0.0001,
+    "num_workers": 4,
+    "no_pretrained": false
+  },
+  "best_val_acc": 0.6067708333333334,
+  "test_acc": 0.6120150187734669,
+  "timestamp": "20251214_182046",
+  "num_classes": 20
+}

@@ -1,0 +1,17 @@
+{
+  "args": {
+    "data_root": "medicine_boxes_split",
+    "model": "resnet50",
+    "epochs": 15,
+    "batch_size": 32,
+    "img_size": 224,
+    "lr": 0.0001,
+    "weight_decay": 0.0001,
+    "num_workers": 4,
+    "no_pretrained": false
+  },
+  "best_val_acc": 0.80859375,
+  "test_acc": 0.804755944931164,
+  "timestamp": "20251214_142409",
+  "num_classes": 20
+}
